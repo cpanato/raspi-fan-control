@@ -2,7 +2,7 @@
 
 This is a small project that I build in order to cool down my raspi home cluster
 
-The case I use ghave some external fans to cool down the pies when it is too hot.
+The case I use have some external fans to cool down the pies when it is too hot.
 However, sometimes the temperature is ok and we can shutdown the fans.
 
 You can deploy this as a binary and run directly in the raspi or if you use the raspis in a cluster using
