@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: fan
+  labels:
+    app: fan
+spec:
+  selector:
+    matchLabels:
+      app: fan
+  template:
+    metadata:
+      labels:
+        app: fan
+    spec:
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        operator: Exists
+        effect: NoSchedule
+      containers:
+      - image: ghcr.io/cpanato/fan-control:main
+        args: ["server"]
+        imagePullPolicy: IfNotPresent
+        name: fan
+        terminationMessagePath: /var/log/termination-log
+        terminationMessagePolicy: File
+        securityContext:
+          privileged: true
+          capabilities:
+            add: ["SYS_RAWIO"]
+        resources:
+          limits:
+            cpu: 100m
+            memory: 100Mi
+          requests:
+            cpu: 5m
+            memory: 10Mi
