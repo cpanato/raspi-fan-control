@@ -1,15 +1,7 @@
-FROM golang:1.17 AS build_base
+FROM gcr.io/distroless/base:debug
 
-WORKDIR /tmp/fan
+COPY raspi-fan-control /bin/raspi-fan-control
 
-COPY . .
+USER nobody
 
-RUN GOOS=linux GOARCH=arm GOARM=7 go build -o ./out/fan .
-
-FROM alpine:3.13
-
-RUN apk add ca-certificates
-
-COPY --from=build_base /tmp/fan/out/fan /app/fan
-
-ENTRYPOINT ["/app/fan"]
+ENTRYPOINT [ "/bin/raspi-fan-control" ]

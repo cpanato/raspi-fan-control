@@ -1,0 +1,62 @@
+project_name: raspi-fan-control
+
+env:
+  - GO111MODULE=on
+
+before:
+  hooks:
+  - go mod tidy
+
+builds:
+- id: fan
+  goos:
+  - linux
+  goarch:
+  - arm
+  goarm:
+  - 7
+  env:
+  - CGO_ENABLED=0
+
+signs:
+- id: fan
+  signature: "${artifact}.sig"
+  cmd: cosign
+  args: ["sign-blob", "--output", "${artifact}.sig", "--key", "./cosign.key", "${artifact}"]
+  artifacts: binary
+
+dockers:
+- id: fan
+  image_templates:
+  - "ghcr.io/cpanato/fan-control:{{ .Version }}"
+  use: buildx
+  dockerfile: Dockerfile
+  goos: linux
+  goarch: arm
+  goarm: 7
+  build_flag_templates:
+  - "--platform=linux/arm/7"
+
+docker_signs:
+- artifacts: all
+  args: [ "sign", "--key", "./cosign.key", "${artifact}" ]
+
+archives:
+- format: binary
+
+checksum:
+  name_template: "{{ .ProjectName }}_checksums.txt"
+
+snapshot:
+  name_template: SNAPSHOT-{{ .ShortCommit }}
+
+release:
+  prerelease: allow # remove this when we start publishing non-prerelease or set to auto
+  draft: true # allow for manual edits
+  github:
+    owner: cpanato
+    name: raspi-fan-control
+  footer: |
+    **Image available**: ghcr.io/cpanato/fan-control:{{ .Version }}
+  extra_files:
+    - glob: "./cosign.pub"

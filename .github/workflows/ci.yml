@@ -12,6 +12,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.17
 
       - name: Get Repo Owner
         id: get_repo_owner
@@ -31,9 +35,22 @@ jobs:
           username: ${{ steps.get_repo_owner.outputs.repo_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build
-        uses: docker/build-push-action@v2.7.0
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v2
+        if: ${{ github.event_name != 'pull_request' }}
         with:
-          platforms: linux/arm/v7
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ghcr.io/${{ steps.get_repo_owner.outputs.repo_owner }}/fan-control:main
+          version: latest
+          args: release --rm-dist --snapshot --skip-sign
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v2
+        if: ${{ github.event_name == 'pull_request' }}
+        with:
+          version: latest
+          args: release --rm-dist --snapshot --skip-publish --skip-sign
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}

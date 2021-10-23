@@ -25,6 +25,8 @@ spec:
         terminationMessagePath: /var/log/termination-log
         terminationMessagePolicy: File
         securityContext:
+          runAsGroup: 0
+          runAsUser: 0
           privileged: true
           capabilities:
             add: ["SYS_RAWIO"]

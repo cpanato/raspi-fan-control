@@ -1,4 +1,4 @@
-module github.com/cpanato/temp/go-rasp
+module github.com/cpanato/raspi-fan-control
 
 go 1.17
 
@@ -22,5 +22,3 @@ require (
 	golang.org/x/sys v0.0.0-20210603081109-ebe580a85c40 // indirect
 	google.golang.org/protobuf v1.26.0 // indirect
 )
-
-// replace github.com/stianeikelan÷d/go-rpio/v4 => github.com/cpanato/go-rpio/v4 v4.5.2-0.20211022120026-e74e62022556

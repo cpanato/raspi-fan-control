@@ -116,7 +116,7 @@ func handleFan() error {
 
 			tempGauge.Set(temp)
 
-			if temp >= 40 {
+			if temp >= 50 {
 				log.Printf("Temp is above the threshold. Actual temperature: %f, turning on the fan\n", temp)
 				pin.High()
 				fanGauge.Set(1)

@@ -1,6 +1,6 @@
 package main
 
-import "github.com/cpanato/temp/go-rasp/cmd"
+import "github.com/cpanato/raspi-fan-control/cmd"
 
 func main() {
 	_ = cmd.Execute()

@@ -6,12 +6,18 @@ on:
       - created
 
 jobs:
-  build:
+  release:
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v2
-    - uses: sigstore/cosign-installer@v1.2.1
+      with:
+        fetch-depth: 0
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.17
+    - uses: sigstore/cosign-installer@v1.2.0
 
     - name: Get Repo Owner
       id: get_repo_owner
@@ -35,17 +41,11 @@ jobs:
         username: ${{ steps.get_repo_owner.outputs.repo_owner }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Build
-      uses: docker/build-push-action@v2.7.0
+    - name: Run GoReleaser
+      uses: goreleaser/goreleaser-action@v2
       with:
-        platforms: linux/arm/v7
-        push: true
-        tags: ghcr.io/${{ steps.get_repo_owner.outputs.repo_owner }}/fan-control:${{ steps.get_tag.outputs.release_tag }}
-
-    - name: Sign the images
-      run: |
-          cosign sign -key=cosign.key ghcr.io/${{ steps.get_repo_owner.outputs.repo_owner }}/fan-control:${{ steps.get_tag.outputs.release_tag }}
-          docker logout
-      shell: bash
+        version: latest
+        args: release --rm-dist
       env:
-        COSIGN_PASSWORD: ${{secrets.COSIGN_PASSWORD}}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
