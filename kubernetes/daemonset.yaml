@@ -1,25 +1,29 @@
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: fan
+  name: fan-control
   labels:
-    app: fan
+    app.kubernetes.io/name: fan-control
 spec:
   selector:
     matchLabels:
-      app: fan
+      app.kubernetes.io/name: fan-control
   template:
     metadata:
       labels:
-        app: fan
+        app.kubernetes.io/name: fan-control
     spec:
       tolerations:
       - key: node-role.kubernetes.io/master
         operator: Exists
         effect: NoSchedule
       containers:
-      - image: ghcr.io/cpanato/fan-control:main
+      - image: ghcr.io/cpanato/fan-control:0.1.1
         args: ["server"]
+        ports:
+        - name: metrics
+          containerPort: 9001
+          protocol: TCP
         imagePullPolicy: IfNotPresent
         name: fan
         terminationMessagePath: /var/log/termination-log

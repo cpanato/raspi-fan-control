@@ -66,6 +66,9 @@ func startServer() {
 		IdleTimeout:  30 * time.Second,
 	}
 
+	v := VersionInfo()
+	log.Println(v.String())
+
 	log.Printf("Listening on %s\n", ":9001")
 	go func() {
 		err := server.ListenAndServe()

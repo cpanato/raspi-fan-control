@@ -1,0 +1,16 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: fan-control
+  namespace: monitoring
+  labels:
+    app.kubernetes.io/name: fan-control
+spec:
+  namespaceSelector:
+    matchNames:
+    - fan-control
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: fan-control
+  endpoints:
+  - port: metrics

@@ -1,0 +1,14 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: fan-control
+  namespace: fan-control
+  labels:
+    app.kubernetes.io/name: fan-control
+spec:
+  selector:
+    app.kubernetes.io/name: fan-control
+  ports:
+  - name: metrics
+    port: 9001
+    protocol: TCP

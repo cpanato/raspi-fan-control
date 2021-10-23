@@ -35,22 +35,21 @@ jobs:
           username: ${{ steps.get_repo_owner.outputs.repo_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Run GoReleaser
+      - name: Install GoReleaser
         uses: goreleaser/goreleaser-action@v2
-        if: ${{ github.event_name != 'pull_request' }}
         with:
-          version: latest
-          args: release --rm-dist --snapshot --skip-sign
+          install-only: true
+
+      - name: snaphot
+        if: ${{ github.event_name != 'pull_request' }}
+        run: make snapshot
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
 
-      - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v2
+      - name: snaphot
         if: ${{ github.event_name == 'pull_request' }}
-        with:
-          version: latest
-          args: release --rm-dist --snapshot --skip-publish --skip-sign
+        run: make snapshot-pr
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}

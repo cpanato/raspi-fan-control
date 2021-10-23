@@ -17,6 +17,8 @@ builds:
   - 7
   env:
   - CGO_ENABLED=0
+  ldflags:
+  - "{{ .Env.LDFLAGS }}"
 
 signs:
 - id: fan
@@ -57,6 +59,11 @@ release:
     owner: cpanato
     name: raspi-fan-control
   footer: |
-    **Image available**: ghcr.io/cpanato/fan-control:{{ .Version }}
+
+    Signed with `cosign` to verify:
+
+    ```shell
+    cosign verify -key https://raw.githubusercontent.com/cpanato/raspi-fan-control/main/cosign.pub ghcr.io/cpanato/fan-control:{{ .Version }}
+    ```
   extra_files:
     - glob: "./cosign.pub"
